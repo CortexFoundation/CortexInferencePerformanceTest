@@ -23,7 +23,7 @@
   * ResNet-152
   * ResNet101-64x4d
 
-## How to start
+## Usage
 * src/InferenceTest.py is single GPU test for inference.
 * src/InferenceStreamTest.py is multi-GPU test for image stream data inference.
 * src/config.json is parameters.
