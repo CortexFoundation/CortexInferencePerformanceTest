@@ -1,4 +1,5 @@
 # CortexInferencePerformanceTest
+Test described in whitepaper
 ## Environment
 
 ### Hardware
