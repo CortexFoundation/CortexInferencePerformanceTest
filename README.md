@@ -30,9 +30,9 @@
 
 ### config.json
 * models     : model names
-* img_dir    : images directory
+* img_dir    : images directory (put images into this directory)
 * result_dir : results directory
-* model_dir  : models directory
+* model_dir  : models directory (put models into this directory)
 * gpu_num    : gpu # for inference
 * batchsize  : batchsize for inference
 * times      : number of times for inference test and number of images for inference stream test
