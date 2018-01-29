@@ -33,7 +33,7 @@ class Inference:
         begin = time.time()
         sym, arg_params, aux_params = mx.model.load_checkpoint(name, 0)
         mod = mx.mod.Module(symbol=sym, context=mx.cpu(), label_names=None) if type=="cpu" else mx.mod.Module(symbol=sym, context=mx.gpu(gpu_id), label_names=None)
-        mod.bind(for_training=False, data_shapes=[('data', (batchsize, 3, 224, 224))])
+        mod.bind(for_training=False, data_shapes=[('data', (self.batchsize, 3, 224, 224))])
         mod.set_params(arg_params, aux_params, allow_missing=True)
         end = time.time()
         return mod,end-begin
@@ -51,14 +51,18 @@ class Inference:
         return end-begin
 
     def getFileSize(self,filePath):
-        filePath = unicode(filePath,'utf8')
+        # filePath = unicode(filePath,'utf8')
         fsize = os.path.getsize(filePath)
         fsize = fsize/float(1024*1024)
         return round(fsize,2)
 
-    def rmInvalidData(self,files_name,rm_img = False):
+    def rmInvalidData(self,rm_img = False):
         if rm_img:
-            for name in files_name:
+            predict_files = []
+            for filename in os.listdir(self.img_dir):
+                if filename.endswith("jpg") or filename.endswith("jpeg") or filename.endswith(".png") or filename.endswith(".gif"):
+                    predict_files.append(filename)
+            for name in predict_files:
                 try:
                     img = self.getImage(name)
                 except Exception,ex:
@@ -68,7 +72,7 @@ class Inference:
             if filename.endswith("jpg") or filename.endswith("jpeg") or filename.endswith(".png") or filename.endswith(".gif"):
                 self.predict_files.append(filename)
 
-    def loadModel(self):
+    def loadModelTest(self):
         self.cpu_model_list = []
         self.gpu_model_list = []
         self.cpu_model_time = []
@@ -83,7 +87,7 @@ class Inference:
                     "model_load_time_cpu":load_model_time
                 }
             )
-            mod,load_model_time = self.loadModel(self.model_dir, model_name),type="gpu")
+            mod,load_model_time = self.loadModel(os.path.join(self.model_dir, model_name),type="gpu")
             self.gpu_model_list.append(mod)
             self.gpu_model_time.append(
                 {
@@ -105,21 +109,21 @@ class Inference:
                     {
                         "model_name":self.models[j],
                         "data_set":i,
-                        "batchsize":batchsize,
+                        "batchsize":self.batchsize,
                         "cpu_time":t
                     }
                 )
                 print i,self.cpu_model_time[j]["model_name"],t
             for j in range(len(self.models)):
                 t = self.predict(sampled,self.gpu_model_list[j])
-                gpu_infer_time.append(
+                self.gpu_infer_time.append(
                     {
                         "model_name":self.models[j],
                         "data_set":i,
-                        "batchsize":batchsize,
+                        "batchsize":self.batchsize,
                         "gpu_time":t
                     }
                 )
                 print i,self.gpu_model_time[j]["model_name"],t
-        json.dump(self.cpu_infer_time,open(os.path.join(self.result_dir,"cpu_infer_time_%d.json"%batchsize),'w'),indent=2)
-        json.dump(self.gpu_infer_time,open(os.path.join(self.result_dir,"gpu_infer_time_%d.json"%batchsize),'w'),indent=2)
+        json.dump(self.cpu_infer_time,open(os.path.join(self.result_dir,"cpu_infer_time_%d.json"%self.batchsize),'w'),indent=2)
+        json.dump(self.gpu_infer_time,open(os.path.join(self.result_dir,"gpu_infer_time_%d.json"%self.batchsize),'w'),indent=2)
