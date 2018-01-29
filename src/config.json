@@ -5,5 +5,5 @@
   "model_dir":"../model/",
   "gpu_num":8,
   "batchsize":1,
-  "times":1
+  "times":100000
 }
