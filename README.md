@@ -44,13 +44,11 @@ Experiments were performed on the CPU and GPU to test the inference speed of dee
 ## Results
 The test results are shown in the table below, the Batch Size in parentheses (the amount of data samples imported in one batch), and all GPU test results are based on the single card.
 
+##### Model size
   <img src="model_size.png" width = "50%" height = "50%" alt="图片名称"   align=center />
 
-  *Model size*
-
+##### Performance comparison
   <img src="speed_comparison.png" width = "50%" height = "50%" alt="图片名称" align=center />
-
-  *Performance comparison*
 
 The above is the result of a single machine test. In order to simulate the real situation, the experimental platform is continuously running inference on a dataset stream containing about 100K images. Each inference is performed on a randomly selected model and the Batch Size is 1, the picture is distributed to 8 GPU cards with load balancing. For two situations:
 1. All the models have been read and stored in GPU memory, and the average speed of inference on a single picture is 3.16 ms.
@@ -60,4 +58,4 @@ The above is the result of a single machine test. In order to simulate the real 
 All nodes support load balancing after the model has been pre-fetched to GPU memory, and parallel inference between GPU cards for the same model results in approximately 300 inferences of a single inference per second. If, in extreme cases, no GPU memory is read ahead and only cached, which means each time the model is re-read and the data re-loaded, a single inference can be made 9 times per second. The above experiments are all unoptimized computations. One of Cortex’s goals is to continuously optimize and improve inference performance.
 
 ## Testing machine
-<img src="testing_machine.JPG" width = "50%" height = "50%" alt="图片名称" align=center />
+<img src="testing_machine.JPG" width = "50%" height = "50%" alt="Testing machine" align=center />
